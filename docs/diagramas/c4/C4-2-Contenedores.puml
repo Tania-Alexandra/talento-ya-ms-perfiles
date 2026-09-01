@@ -1,0 +1,25 @@
+@startuml C4-2-Contenedores
+!include <C4/C4_Container>
+
+title ms-perfiles — C4 Nivel 2: Contenedores
+
+LAYOUT_WITH_LEGEND()
+
+Person(actor, "Trabajador / Freelancer", "Busca ofertas, postula y chatea")
+System_Boundary(sb, "ms-perfiles (dominio de Perfiles)") {
+  Container(api, "API de Perfiles", "Spring Boot 3 · Java 21 · ECS Fargate", "Expone /api/perfiles y persiste el dominio con su propia base de datos")
+  ContainerDb(db, "BD de identidad", "Aurora Serverless (PostgreSQL)", "Usuarios, roles y perfiles (propia del dominio)")
+}
+
+Container(apigw, "API Gateway", "Amazon API Gateway", "JWT + throttling")
+Container(cognito, "Amazon Cognito", "Servicio AWS", "Autenticación y emisión de JWT por rol")
+Container(ev, "Amazon EventBridge", "Servicio AWS", "usuario.registrado / rol.cambiado")
+
+Rel(actor, apigw, "Usa la API", "HTTPS + JWT")
+Rel(apigw, api, "Enruta /api/perfiles", "REST")
+Rel(api, db, "Lee/escribe usuarios", "JPA / SQL (TLS)")
+Rel(api, cognito, "Registra y autentica", "AWS SDK")
+Rel(api, ev, "Publica eventos de usuario", "AWS SDK")
+
+SHOW_LEGEND()
+@enduml

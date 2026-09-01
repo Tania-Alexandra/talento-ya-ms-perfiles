@@ -1,0 +1,8 @@
+services:
+  perfiles-svc:
+    build: .
+    image: duoc/jv0101-caso02-perfiles:1.0.0
+    container_name: caso02-perfiles-svc
+    ports:
+      - "${PORT:-8080}:8080"
+    restart: unless-stopped

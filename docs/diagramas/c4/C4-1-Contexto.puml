@@ -1,0 +1,21 @@
+@startuml C4-1-Contexto
+!include <C4/C4_Context>
+
+title ms-perfiles — C4 Nivel 1: Contexto
+
+LAYOUT_WITH_LEGEND()
+
+Person(actor, "Trabajador / Freelancer", "Busca ofertas, postula y chatea")
+System(sys, "ms-perfiles", "Perfiles del caso caso02: registra y autentica a los usuarios del sistema, administra sus roles y perfiles, y entrega los tokens de identidad (JWT) que el resto de los servicios consume para autorizar cada operación")
+
+System_Ext(core, "ms-postulaciones", "Postulaciones del caso (servicio central)")
+System_Ext(notif, "ms-notificaciones", "Notificaciones del caso")
+System_Ext(bus, "Amazon EventBridge", "Bus de eventos de dominio")
+
+Rel(actor, sys, "Usa el servicio", "HTTPS / REST + JWT")
+Rel(sys, core, "Postulaciones del caso (servicio central)", "REST / eventos")
+Rel_Back(notif, sys, "Notificaciones del caso", "EventBridge / SQS")
+Rel(sys, bus, "Bus de eventos de dominio", "AWS SDK")
+
+SHOW_LEGEND()
+@enduml
